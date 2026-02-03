@@ -30,7 +30,7 @@ export default function SearchBar() {
       )
       const data = await res.json()
       setResults(data)
-    } catch {
+    } catch (error) {
       setResults([])
     }
   }

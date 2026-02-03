@@ -35,7 +35,7 @@ export function WeatherProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState("")
   const [unit, setUnit] = useState<Unit>("metric")
   const [lang, setLang] = useState("en")
-  const [lastCity, setLastCity] = useState("")
+  const [lastCity, setLastCity] = useState("herat")
   const [selectedDay, setSelectedDay] = useState("")
   const [windUnit, setWindUnit] = useState<WindUnit>("mph")
   const [precipUnit, setPrecipUnit] = useState<PrecipUnit>("in")

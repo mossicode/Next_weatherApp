@@ -1,61 +1,14 @@
-// "use client"
-// import Image from "next/image"
-
-// function Today() {
-//   return (
-//     <div className="w-full">
-//         <div className="w-full flex justify-between rounded-2xl items-center backImage bg-no-repeat bg-cover sm:min-h-60 max-sm:h-40  px-6 max-sm:px-3 max-sm:pe-4">
-//         <div className="flex flex-col">
-//             <div className="font-bold text-nowrap">Berlin, Germany</div>
-//             <div className="text-nowrap max-sm:text-xs">Thuesday, Aug 5, 2045</div>
-//         </div>
-//         <div className="flex items-center gap-x-2">
-//             <div>
-//                 <Image src="/logo.svg" height={23} width={123} alt="hhehe" />
-//             </div>
-//             <div className="relative">
-//                 <span className="text-4xl max-sm:text-xl max-sm:text-2xl">68</span>
-//                  <span className="absolute font-bold">O</span>
-//             </div>
-//         </div>
-//     </div>
-//     <div className="w-full min-h-16 mt-5 flex gap-3 flex-wrap">
-//         <div className="flex-1 bg-sidebar-accent rounded-lg px-3 py-4 flex-nowrap">
-//                 <div className="flex-nowrap text-nowrap">Feels LIke</div>
-//                  <div className="relative flex-nowrap text-nowrap">
-//                     <span className="text-4xl max-sm:text-xl flex-nowrap text-nowrap">68</span>
-//                     <span className="absolute font-bold">O</span>
-//                  </div>
-//         </div>
-//         <div className="flex-1 bg-sidebar-accent rounded-lg px-3 py-4">
-//                 <div className="flex-nowrap text-nowrap">Humidity</div>
-//                  <div className="text-4xl max-sm:text-xl flex-nowrap text-nowrap" >68% </div>
-//         </div>
-//         <div className="flex-1 bg-sidebar-accent rounded-lg px-3 py-4">
-//                 <div className="">Wind</div>
-//                  <div className="text-4xl max-sm:text-xl flex-nowrap text-nowrap">9 mph </div>
-//         </div>
-//         <div className="flex-1 bg-sidebar-accent rounded-lg px-3 py-4">
-//                 <div className="flex-nowrap text-nowrap">precipitaion</div>
-//                  <div className="text-4xl max-sm:text-xl flex-nowrap text-nowrap">0 in</div>
-//         </div>
-//     </div>
-//     </div>
-//   )
-// }
-
-// export default Today
 "use client"
 
 import { useWeather } from "@/context/WeatherContext"
-import Image from "next/image"
 
 function Today() {
   const { weather, windUnit, precipUnit } = useWeather()
 
-  // ✅ guards (VERY IMPORTANT)
+
   if (!weather) return null
   if (!weather.list || weather.list.length === 0) return null
+  console.log(weather)
 
   const todayData = weather.list[0]
 
@@ -96,7 +49,6 @@ function Today() {
 
         <div className="flex items-center gap-x-2">
           <div>
-            {/* weather icon */}
              <img
                 src={iconUrl}
                 alt="icon"
