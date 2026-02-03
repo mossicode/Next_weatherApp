@@ -10,24 +10,14 @@ import { Search } from "lucide-react"
 import { Button } from "../ui/button"
 import { useWeather } from "@/context/WeatherContext"
 
-// Debounce helper
-function debounce(func: Function, delay: number) {
-  let timer: NodeJS.Timeout
-  return (...args: any[]) => {
-    if (timer) clearTimeout(timer)
-    timer = setTimeout(() => func(...args), delay)
-  }
-}
-
 export default function SearchBar() {
-  const [cityInput, setCityInput] = useState("")
+  const [cityInput, setCityInput] = useState("herat")
   const [results, setResults] = useState<any[]>([])
   const { setWeather, setLoading, setError, setLastCity, error } = useWeather()
   const [localError, setLocalError] = useState("")
 
   const API_KEY = process.env.NEXT_PUBLIC_WEATHER_API_KEY
 
-  // fetch suggestions from OpenWeather Geocoding API
   const fetchSuggestions = async (query: string) => {
     if (!query) {
       setResults([])
@@ -45,13 +35,10 @@ export default function SearchBar() {
     }
   }
 
-  // debounce the API call
-  const debouncedFetch = debounce(fetchSuggestions, 300)
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setCityInput(value)
-    debouncedFetch(value)
+    fetchSuggestions(value)
   }
 
   const handleSelect = async (item: any) => {
@@ -78,7 +65,7 @@ export default function SearchBar() {
   // دکمه Search
   const handleSearch = async () => {
     if (!cityInput.trim()) {
-      setLocalError("Please enter a city")
+      setLocalError("Please enter a city name.")
       return
     }
 
