@@ -12,7 +12,6 @@ type WeatherContextType = {
   error: string
   unit: Unit
   lang: string
-  lastCity: string
   selectedDay: string
   windUnit: WindUnit
   precipUnit: PrecipUnit
@@ -21,7 +20,6 @@ type WeatherContextType = {
   setError: (v: string) => void
   setUnit: (v: Unit) => void
   setLang: (v: string) => void
-  setLastCity: (v: string) => void
   setSelectedDay: (v: string) => void
   setWindUnit: (v: WindUnit) => void
   setPrecipUnit: (v: PrecipUnit) => void
@@ -35,7 +33,6 @@ export function WeatherProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState("")
   const [unit, setUnit] = useState<Unit>("metric")
   const [lang, setLang] = useState("en")
-  const [lastCity, setLastCity] = useState("")
   const [selectedDay, setSelectedDay] = useState("")
   const [windUnit, setWindUnit] = useState<WindUnit>("mph")
   const [precipUnit, setPrecipUnit] = useState<PrecipUnit>("in")
@@ -44,13 +41,11 @@ export function WeatherProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const u = localStorage.getItem("unit")
     const l = localStorage.getItem("lang")
-    const c = localStorage.getItem("lastCity")
     const w = localStorage.getItem("windUnit")
     const p = localStorage.getItem("precipUnit")
 
     if (u) setUnit(u as Unit)
     if (l) setLang(l)
-    if (c) setLastCity(c)
     if (w) setWindUnit(w as WindUnit)
     if (p) setPrecipUnit(p as PrecipUnit)
   }, [])
@@ -59,39 +54,15 @@ export function WeatherProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     localStorage.setItem("unit", unit)
     localStorage.setItem("lang", lang)
-    localStorage.setItem("lastCity", lastCity)
     localStorage.setItem("windUnit", windUnit)
     localStorage.setItem("precipUnit", precipUnit)
-  }, [unit, lang, lastCity, windUnit, precipUnit])
+  }, [unit, lang, windUnit, precipUnit])
 
-  // refetch when unit/lang changes
+  // only update selected day when weather changes
   useEffect(() => {
-    if (!lastCity) return
-
-    const fetchWeather = async () => {
-      setLoading(true)
-      setError("")
-      try {
-        const res = await fetch(
-          `https://api.openweathermap.org/data/2.5/forecast?q=${lastCity}&units=${unit}&lang=${lang}&appid=${process.env.NEXT_PUBLIC_WEATHER_API_KEY}`
-        )
-        const data = await res.json()
-
-        if (data.cod === "200") {
-          setWeather(data)
-          setSelectedDay(new Date(data.list[0].dt * 1000).toDateString())
-        } else {
-          setError(data.message)
-        }
-      } catch {
-        setError("Failed to fetch weather")
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchWeather()
-  }, [unit, lang, lastCity])
+    if (!weather) return
+    setSelectedDay(new Date(weather.list[0].dt * 1000).toDateString())
+  }, [weather])
 
   return (
     <WeatherContext.Provider
@@ -101,7 +72,6 @@ export function WeatherProvider({ children }: { children: React.ReactNode }) {
         error,
         unit,
         lang,
-        lastCity,
         selectedDay,
         windUnit,
         precipUnit,
@@ -110,7 +80,6 @@ export function WeatherProvider({ children }: { children: React.ReactNode }) {
         setError,
         setUnit,
         setLang,
-        setLastCity,
         setSelectedDay,
         setWindUnit,
         setPrecipUnit,

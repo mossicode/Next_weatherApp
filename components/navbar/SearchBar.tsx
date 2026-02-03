@@ -14,7 +14,7 @@ import { useWeather } from "@/context/WeatherContext"
 function debounce(func: Function, delay: number) {
   let timer: NodeJS.Timeout
   return (...args: any[]) => {
-    if (timer) clearTimeout(timer)
+    clearTimeout(timer)
     timer = setTimeout(() => func(...args), delay)
   }
 }
@@ -22,12 +22,12 @@ function debounce(func: Function, delay: number) {
 export default function SearchBar() {
   const [cityInput, setCityInput] = useState("")
   const [results, setResults] = useState<any[]>([])
-  const { setWeather, setLoading, setError, setLastCity, error } = useWeather()
+  const { setWeather, setLoading, setError, error } = useWeather()
   const [localError, setLocalError] = useState("")
 
   const API_KEY = process.env.NEXT_PUBLIC_WEATHER_API_KEY
 
-  // fetch suggestions from OpenWeather Geocoding API
+  // fetch suggestions
   const fetchSuggestions = async (query: string) => {
     if (!query) {
       setResults([])
@@ -39,13 +39,12 @@ export default function SearchBar() {
         `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${API_KEY}`
       )
       const data = await res.json()
-      setResults(data)
+      setResults(Array.isArray(data) ? data : [])
     } catch {
       setResults([])
     }
   }
 
-  // debounce the API call
   const debouncedFetch = debounce(fetchSuggestions, 300)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,16 +56,22 @@ export default function SearchBar() {
   const handleSelect = async (item: any) => {
     setCityInput(`${item.name}, ${item.country}`)
     setResults([])
-    setLoading(true)
+    setLocalError("")
     setError("")
+    setLoading(true)
 
     try {
       const res = await fetch(
         `https://api.openweathermap.org/data/2.5/forecast?lat=${item.lat}&lon=${item.lon}&units=metric&appid=${API_KEY}`
       )
       const data = await res.json()
-      setWeather(data)
-      setLastCity(item.name)
+
+      if (data.cod === "200") {
+        setWeather(data)
+      } else {
+        setError(data.message || "City not found")
+        setWeather(null)
+      }
     } catch {
       setError("Something went wrong!")
       setWeather(null)
@@ -75,7 +80,6 @@ export default function SearchBar() {
     }
   }
 
-  // دکمه Search
   const handleSearch = async () => {
     if (!cityInput.trim()) {
       setLocalError("Please enter a city")
@@ -83,24 +87,20 @@ export default function SearchBar() {
     }
 
     setLocalError("")
-    setLoading(true)
     setError("")
+    setLoading(true)
 
     try {
-      if (results.length > 0) {
-        // اگر پیشنهادی وجود دارد، اولین گزینه را انتخاب کن
-        await handleSelect(results[0])
+      const res = await fetch(
+        `https://api.openweathermap.org/geo/1.0/direct?q=${cityInput}&limit=1&appid=${API_KEY}`
+      )
+      const data = await res.json()
+
+      if (Array.isArray(data) && data.length > 0) {
+        await handleSelect(data[0])
       } else {
-        const res = await fetch(
-          `https://api.openweathermap.org/geo/1.0/direct?q=${cityInput}&limit=1&appid=${API_KEY}`
-        )
-        const data = await res.json()
-        if (data.length > 0) {
-          await handleSelect(data[0])
-        } else {
-          setError("City not found!")
-          setWeather(null)
-        }
+        setError("City not found!")
+        setWeather(null)
       }
     } catch {
       setError("Something went wrong!")
@@ -136,14 +136,15 @@ export default function SearchBar() {
         </Button>
 
         {results.length > 0 && (
-          <ul className=" top-full left-0 w-full border rounded mt-1 max-h-48 overflow-y-auto shadow-lg  z-50">
+          <ul className="absolute top-full left-0 w-full border rounded mt-1 max-h-48 overflow-y-auto shadow-lg z-50 bg-white">
             {results.map((item, i) => (
               <li
-                key={i}
-                className="px-3 py-2 cursor-pointer "
+                key={`${item.lat}-${item.lon}-${i}`}
+                className="px-3 py-2 cursor-pointer hover:bg-gray-100"
                 onClick={() => handleSelect(item)}
               >
-                {item.name}, {item.state ? item.state + ", " : ""}{item.country}
+                {item.name}
+                {item.state ? `, ${item.state}` : ""}, {item.country}
               </li>
             ))}
           </ul>
