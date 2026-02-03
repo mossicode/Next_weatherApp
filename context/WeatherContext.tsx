@@ -12,6 +12,7 @@ type WeatherContextType = {
   error: string
   unit: Unit
   lang: string
+  lastCity: string
   selectedDay: string
   windUnit: WindUnit
   precipUnit: PrecipUnit
@@ -20,6 +21,7 @@ type WeatherContextType = {
   setError: (v: string) => void
   setUnit: (v: Unit) => void
   setLang: (v: string) => void
+  setLastCity: (v: string) => void
   setSelectedDay: (v: string) => void
   setWindUnit: (v: WindUnit) => void
   setPrecipUnit: (v: PrecipUnit) => void
@@ -33,35 +35,14 @@ export function WeatherProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState("")
   const [unit, setUnit] = useState<Unit>("metric")
   const [lang, setLang] = useState("en")
+  const [lastCity, setLastCity] = useState("")
   const [selectedDay, setSelectedDay] = useState("")
   const [windUnit, setWindUnit] = useState<WindUnit>("mph")
   const [precipUnit, setPrecipUnit] = useState<PrecipUnit>("in")
-
-  // load settings
   useEffect(() => {
-    const u = localStorage.getItem("unit")
-    const l = localStorage.getItem("lang")
-    const w = localStorage.getItem("windUnit")
-    const p = localStorage.getItem("precipUnit")
-
-    if (u) setUnit(u as Unit)
-    if (l) setLang(l)
-    if (w) setWindUnit(w as WindUnit)
-    if (p) setPrecipUnit(p as PrecipUnit)
-  }, [])
-
-  // save settings
-  useEffect(() => {
-    localStorage.setItem("unit", unit)
-    localStorage.setItem("lang", lang)
-    localStorage.setItem("windUnit", windUnit)
-    localStorage.setItem("precipUnit", precipUnit)
-  }, [unit, lang, windUnit, precipUnit])
-
-  // update selected day when weather changes
-  useEffect(() => {
-    if (!weather) return
-    setSelectedDay(new Date(weather.list[0].dt * 1000).toDateString())
+    if (weather?.list?.length > 0) {
+      setSelectedDay(new Date(weather.list[0].dt * 1000).toDateString())
+    }
   }, [weather])
 
   return (
@@ -72,6 +53,7 @@ export function WeatherProvider({ children }: { children: React.ReactNode }) {
         error,
         unit,
         lang,
+        lastCity,
         selectedDay,
         windUnit,
         precipUnit,
@@ -80,6 +62,7 @@ export function WeatherProvider({ children }: { children: React.ReactNode }) {
         setError,
         setUnit,
         setLang,
+        setLastCity,
         setSelectedDay,
         setWindUnit,
         setPrecipUnit,

@@ -10,11 +10,11 @@ import { Search } from "lucide-react"
 import { Button } from "../ui/button"
 import { useWeather } from "@/context/WeatherContext"
 
-// debounce helper
+// Debounce helper
 function debounce(func: Function, delay: number) {
   let timer: NodeJS.Timeout
   return (...args: any[]) => {
-    clearTimeout(timer)
+    if (timer) clearTimeout(timer)
     timer = setTimeout(() => func(...args), delay)
   }
 }
@@ -22,18 +22,14 @@ function debounce(func: Function, delay: number) {
 export default function SearchBar() {
   const [cityInput, setCityInput] = useState("")
   const [results, setResults] = useState<any[]>([])
-  const { setWeather, setLoading, setError, error } = useWeather()
+  const { setWeather, setLoading, setError, setLastCity, error } = useWeather()
   const [localError, setLocalError] = useState("")
 
   const API_KEY = process.env.NEXT_PUBLIC_WEATHER_API_KEY
 
-  if (!API_KEY) {
-    console.error("Missing OpenWeather API key")
-  }
-
-  // fetch city suggestions
+  // fetch suggestions from OpenWeather Geocoding API
   const fetchSuggestions = async (query: string) => {
-    if (!query || !API_KEY) {
+    if (!query) {
       setResults([])
       return
     }
@@ -43,12 +39,13 @@ export default function SearchBar() {
         `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${API_KEY}`
       )
       const data = await res.json()
-      setResults(Array.isArray(data) ? data : [])
+      setResults(data)
     } catch {
       setResults([])
     }
   }
 
+  // debounce the API call
   const debouncedFetch = debounce(fetchSuggestions, 300)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,26 +55,18 @@ export default function SearchBar() {
   }
 
   const handleSelect = async (item: any) => {
-    if (!API_KEY) return
-
     setCityInput(`${item.name}, ${item.country}`)
     setResults([])
-    setLocalError("")
-    setError("")
     setLoading(true)
+    setError("")
 
     try {
       const res = await fetch(
         `https://api.openweathermap.org/data/2.5/forecast?lat=${item.lat}&lon=${item.lon}&units=metric&appid=${API_KEY}`
       )
       const data = await res.json()
-
-      if (data.cod === "200") {
-        setWeather(data)
-      } else {
-        setError(data.message || "City not found")
-        setWeather(null)
-      }
+      setWeather(data)
+      setLastCity(item.name)
     } catch {
       setError("Something went wrong!")
       setWeather(null)
@@ -86,27 +75,32 @@ export default function SearchBar() {
     }
   }
 
+  // دکمه Search
   const handleSearch = async () => {
-    if (!cityInput.trim() || !API_KEY) {
+    if (!cityInput.trim()) {
       setLocalError("Please enter a city")
       return
     }
 
     setLocalError("")
-    setError("")
     setLoading(true)
+    setError("")
 
     try {
-      const res = await fetch(
-        `https://api.openweathermap.org/geo/1.0/direct?q=${cityInput}&limit=1&appid=${API_KEY}`
-      )
-      const data = await res.json()
-
-      if (Array.isArray(data) && data.length > 0) {
-        await handleSelect(data[0])
+      if (results.length > 0) {
+        // اگر پیشنهادی وجود دارد، اولین گزینه را انتخاب کن
+        await handleSelect(results[0])
       } else {
-        setError("City not found!")
-        setWeather(null)
+        const res = await fetch(
+          `https://api.openweathermap.org/geo/1.0/direct?q=${cityInput}&limit=1&appid=${API_KEY}`
+        )
+        const data = await res.json()
+        if (data.length > 0) {
+          await handleSelect(data[0])
+        } else {
+          setError("City not found!")
+          setWeather(null)
+        }
       }
     } catch {
       setError("Something went wrong!")
@@ -142,15 +136,14 @@ export default function SearchBar() {
         </Button>
 
         {results.length > 0 && (
-          <ul className="absolute top-full left-0 w-full border rounded mt-1 max-h-48 overflow-y-auto shadow-lg z-50 bg-white">
+          <ul className=" top-full left-0 w-full border rounded mt-1 max-h-48 overflow-y-auto shadow-lg  z-50">
             {results.map((item, i) => (
               <li
-                key={`${item.lat}-${item.lon}-${i}`}
-                className="px-3 py-2 cursor-pointer hover:bg-gray-100"
+                key={i}
+                className="px-3 py-2 cursor-pointer "
                 onClick={() => handleSelect(item)}
               >
-                {item.name}
-                {item.state ? `, ${item.state}` : ""}, {item.country}
+                {item.name}, {item.state ? item.state + ", " : ""}{item.country}
               </li>
             ))}
           </ul>
