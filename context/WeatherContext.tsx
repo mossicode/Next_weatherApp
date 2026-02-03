@@ -58,7 +58,7 @@ export function WeatherProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("precipUnit", precipUnit)
   }, [unit, lang, windUnit, precipUnit])
 
-  // only update selected day when weather changes
+  // update selected day when weather changes
   useEffect(() => {
     if (!weather) return
     setSelectedDay(new Date(weather.list[0].dt * 1000).toDateString())

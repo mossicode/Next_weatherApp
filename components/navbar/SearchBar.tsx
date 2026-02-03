@@ -10,7 +10,7 @@ import { Search } from "lucide-react"
 import { Button } from "../ui/button"
 import { useWeather } from "@/context/WeatherContext"
 
-// Debounce helper
+// debounce helper
 function debounce(func: Function, delay: number) {
   let timer: NodeJS.Timeout
   return (...args: any[]) => {
@@ -27,9 +27,13 @@ export default function SearchBar() {
 
   const API_KEY = process.env.NEXT_PUBLIC_WEATHER_API_KEY
 
-  // fetch suggestions
+  if (!API_KEY) {
+    console.error("Missing OpenWeather API key")
+  }
+
+  // fetch city suggestions
   const fetchSuggestions = async (query: string) => {
-    if (!query) {
+    if (!query || !API_KEY) {
       setResults([])
       return
     }
@@ -54,6 +58,8 @@ export default function SearchBar() {
   }
 
   const handleSelect = async (item: any) => {
+    if (!API_KEY) return
+
     setCityInput(`${item.name}, ${item.country}`)
     setResults([])
     setLocalError("")
@@ -81,7 +87,7 @@ export default function SearchBar() {
   }
 
   const handleSearch = async () => {
-    if (!cityInput.trim()) {
+    if (!cityInput.trim() || !API_KEY) {
       setLocalError("Please enter a city")
       return
     }
