@@ -120,6 +120,7 @@ export default function SearchBar() {
         if (data.length > 0) {
           await handleSelect(data[0])
         } else {
+          console.log(data)
           setError("City not found!")
           setWeather(null)
         }

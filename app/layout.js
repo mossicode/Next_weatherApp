@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
        
         <ThemeProvider
            attribute="class" 
-            defaultTheme="system"   
+            defaultTheme="dark"   
             >
           <WeatherProvider>{children}</WeatherProvider> 
         </ThemeProvider>
