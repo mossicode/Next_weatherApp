@@ -16,7 +16,7 @@ export default function Home() {
 
       {/* navbar */}
     <div className="flex justify-between items-center  pt-3 ">
-      {/* {Error&& <h1>Error: {Error}</h1>} */}
+    
       {Error&& <h1 className="text-red-500">Error: {Error}</h1>}
       <div>
         <Image height={40} width={140} alt="icon" src="./logo.svg" />
@@ -33,10 +33,12 @@ export default function Home() {
     </div>
       <div className="w-full flex gap-x-4 max-md:flex-col mb-10 ">
           <div className="max-md:w-full w-2/3 flex-1">
+            
              <Today />
              <Daily />
           </div>
           <div className=" max-md:w-full w-1/3 flex-1 bg-accent rounded-2xl mt-3 ">
+            
             <Hourly />
           </div>
       </div>

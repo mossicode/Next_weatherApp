@@ -12,38 +12,36 @@ import { useWeather } from "@/context/WeatherContext"
 
 export default function Weeks() {
   const { weather, selectedDay, setSelectedDay } = useWeather()
-  if (!weather) return null
+  if (!weather || !weather.list) return null
 
-  const days = Array.from(
-    new Set(
-      weather.list.map((item: any) =>
-        new Date(item.dt * 1000).toDateString()
-      )
-    )
-  )
+  // گرفتن لیست روزهای یکتا
+  const days = [...new Set(weather.list.map((item: any) =>
+    new Date(item.dt * 1000).toDateString()
+  ))]
 
-  const selectedLabel = new Date(selectedDay).toLocaleDateString("en-US", {
-    weekday: "long",
-  })
+  const selectedLabel = selectedDay
+    ? new Date(selectedDay).toLocaleDateString("en-US", { weekday: "long" })
+    : "----"
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="text-2xl my-3 h-14">
+        <Button
+          variant="outline"
+          className="text-2xl my-3 h-14 max-lg:h-12 max-lg:text-base flex-wrap"
+        >
           {selectedLabel} ^
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent>
+      <DropdownMenuContent className="w-48">
         <DropdownMenuGroup>
           {days.map((day) => (
             <DropdownMenuItem
               key={day}
               onClick={() => setSelectedDay(day)}
             >
-              {new Date(day).toLocaleDateString("en-US", {
-                weekday: "long",
-              })}
+              {new Date(day).toLocaleDateString("en-US", { weekday: "long" })}
             </DropdownMenuItem>
           ))}
         </DropdownMenuGroup>

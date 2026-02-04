@@ -59,7 +59,7 @@ export function WeatherProvider({ children }: { children: React.ReactNode }) {
         precipUnit,
         setWeather,
         setLoading,
-        setError,
+        setError,   
         setUnit,
         setLang,
         setLastCity,

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   InputGroup,
   InputGroupAddon,
@@ -11,15 +11,33 @@ import { Button } from "../ui/button"
 import { useWeather } from "@/context/WeatherContext"
 
 export default function SearchBar() {
-  const [cityInput, setCityInput] = useState("herat")
+  const [cityInput, setCityInput] = useState("")
   const [results, setResults] = useState<any[]>([])
-  const { setWeather, setLoading, setError, setLastCity, error } = useWeather()
+  const [debouncedValue, setDebouncedValue] = useState("")
   const [localError, setLocalError] = useState("")
+
+  const { setWeather, setLoading, setError, setLastCity, error } = useWeather()
 
   const API_KEY = process.env.NEXT_PUBLIC_WEATHER_API_KEY
 
+  // ===============================
+  // Debounce input (500ms delay)
+  // ===============================
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(cityInput)
+    }, 500)
+
+    return () => {
+      clearTimeout(handler)
+    }
+  }, [cityInput])
+
+  // ===============================
+  // Fetch city suggestions
+  // ===============================
   const fetchSuggestions = async (query: string) => {
-    if (!query) {
+    if (!query.trim()) {
       setResults([])
       return
     }
@@ -30,19 +48,34 @@ export default function SearchBar() {
       )
       const data = await res.json()
       setResults(data)
-    } catch (error) {
+    } catch {
       setResults([])
     }
   }
 
+  // ===============================
+  // Call API after debounce
+  // ===============================
+  useEffect(() => {
+    if (debouncedValue) {
+      fetchSuggestions(debouncedValue)
+    } else {
+      setResults([])
+    }
+  }, [debouncedValue])
+
+  // ===============================
+  // Input change
+  // ===============================
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setCityInput(value)
-    fetchSuggestions(value)
+    setCityInput(e.target.value)
   }
 
+  // ===============================
+  // Select city from list
+  // ===============================
   const handleSelect = async (item: any) => {
-    setCityInput(`${item.name}, ${item.country}`)
+    setCityInput(item.name)
     setResults([])
     setLoading(true)
     setError("")
@@ -62,7 +95,9 @@ export default function SearchBar() {
     }
   }
 
-  // دکمه Search
+  // ===============================
+  // Search button
+  // ===============================
   const handleSearch = async () => {
     if (!cityInput.trim()) {
       setLocalError("Please enter a city name.")
@@ -75,13 +110,13 @@ export default function SearchBar() {
 
     try {
       if (results.length > 0) {
-        // اگر پیشنهادی وجود دارد، اولین گزینه را انتخاب کن
         await handleSelect(results[0])
       } else {
         const res = await fetch(
           `https://api.openweathermap.org/geo/1.0/direct?q=${cityInput}&limit=1&appid=${API_KEY}`
         )
         const data = await res.json()
+
         if (data.length > 0) {
           await handleSelect(data[0])
         } else {
@@ -99,12 +134,12 @@ export default function SearchBar() {
 
   return (
     <div className="max-sm:w-full flex flex-col justify-center mx-auto mb-8">
-      <h1 className="text-center mt-4 mb-6 pb-3 text-3xl max-sm:text-xl max-sm:mb-3">
+      <h1 className="text-center mt-4 mb-6 pb-3 text-3xl max-sm:text-xl">
         How is the sky looking today?
       </h1>
 
       <div className="flex gap-x-4 items-center flex-wrap relative">
-        <InputGroup className="w-sm max-sm:w-full h-16 max-sm:h-10 flex-1">
+        <InputGroup className="sm:min-w-100 max-sm:w-full h-16 max-sm:h-10 flex-1">
           <InputGroupInput
             placeholder="Type city or province"
             value={cityInput}
@@ -121,21 +156,22 @@ export default function SearchBar() {
         >
           Search
         </Button>
-
-        {results.length > 0 && (
-          <ul className=" top-full left-0 w-full border rounded mt-1 max-h-48 overflow-y-auto shadow-lg  z-50">
-            {results.map((item, i) => (
-              <li
-                key={i}
-                className="px-3 py-2 cursor-pointer "
-                onClick={() => handleSelect(item)}
-              >
-                {item.name}, {item.state ? item.state + ", " : ""}{item.country}
-              </li>
-            ))}
-          </ul>
-        )}
       </div>
+
+      {results.length > 0 && (
+        <ul className="w-100 border rounded mt-1 max-h-48 overflow-y-auto shadow-lg">
+          {results.map((item, i) => (
+            <li
+              key={i}
+              className="px-3 py-2 cursor-pointer "
+              onClick={() => handleSelect(item)}
+            >
+              {item.name}, {item.state ? item.state + ", " : ""}
+              {item.country}
+            </li>
+          ))}
+        </ul>
+      )}
 
       {(localError || error) && (
         <div className="text-red-500 text-center mt-3">

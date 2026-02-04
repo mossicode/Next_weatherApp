@@ -17,8 +17,6 @@ export default function Setting() {
   const {
     unit,
     setUnit,
-    lang,
-    setLang,
     windUnit,
     setWindUnit,
     precipUnit,
@@ -42,19 +40,6 @@ export default function Setting() {
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setUnit("imperial")}>
             Fahrenheit {unit === "imperial" && "✓"}
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-
-        <DropdownMenuSeparator />
-
-        {/* Language */}
-        <DropdownMenuGroup>
-          <DropdownMenuLabel>Language</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => setLang("en")}>
-            English {lang === "en" && "✓"}
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setLang("fa")}>
-            Persian {lang === "fa" && "✓"}
           </DropdownMenuItem>
         </DropdownMenuGroup>
 
