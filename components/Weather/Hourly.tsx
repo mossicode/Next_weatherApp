@@ -18,7 +18,7 @@ function Hourly() {
   })
 
   // حداکثر 8 آیتم = 24 ساعت آینده
-  const hourlyData = futureItems.slice(0, 8)
+  const hourlyData = futureItems.slice(0, 10)
 
   return (
     <div className="bg-accent px-2 pt-3 rounded-2xl">
