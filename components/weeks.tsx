@@ -28,7 +28,7 @@ export default function Weeks() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="text-2xl my-3 h-14 max-lg:h-12 max-lg:text-base flex-wrap"
+          className="text-2xl my-3 h-14 max-lg:h-10 max-lg:text-xs flex-wrap"
         >
           {selectedLabel} ^
         </Button>

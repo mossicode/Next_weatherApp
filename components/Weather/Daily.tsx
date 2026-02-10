@@ -44,7 +44,7 @@ function Daily() {
     <div className="w-full mt-5">
       <h1>Daily Forecast</h1>
 
-      <div className="flex gap-x-3 flex-nowrap overflow-y-auto">
+      <div className="flex gap-x-3 flex-nowrap overflow-y-auto no-scrollbar">
         {dailyArray.map((item, index) => (
           <div
             key={index}

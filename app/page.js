@@ -31,13 +31,13 @@ export default function Home() {
     <div className="flex flex-col justify-center mx-auto ">
       <SearchBar />
     </div>
-      <div className="w-full flex gap-x-4 max-md:flex-col mb-10 ">
-          <div className="max-md:w-full w-2/3 flex-1">
+      <div className="w-full flex gap-x-4 max-lg:flex-col mb-10 ">
+          <div className="max-lg:w-full w-2/3 flex-1">
             
              <Today />
              <Daily />
           </div>
-          <div className=" max-md:w-full w-1/3 flex-1 bg-accent rounded-2xl mt-3 ">
+          <div className=" max-lg:w-full w-1/3 flex-1 bg-accent max-lg:pb-3 rounded-2xl mt-3 max-lg:mb-10 ">
             
             <Hourly />
           </div>

@@ -21,13 +21,13 @@ function Hourly() {
   const hourlyData = futureItems.slice(0, 10)
 
   return (
-    <div className="bg-accent px-2 pt-3 rounded-2xl">
-      <div className="flex justify-between items-center w-full lg:flex-col xl:flex-row max-sm:flex">
-        <span className="text-3xl max-lg:text-base">Hourly Forecast</span>
+    <div className="bg-accent px-2 pt-3 rounded-2xl lg:max-h-112  ">
+      <div className="flex justify-between items-center w-full  lg:flex-row max-sm:flex ">
+        <span className="text-3xl max-lg:text-base">Hourly <span className="max-sm:hidden ">Forecast</span></span>
         <Weeks />
       </div>
 
-      <div className="overflow-y-auto h-116 mt-3">
+      <div className="overflow-y-auto h-116 mt-3 no-scrollbar max-lg:max-h-100 ">
         {hourlyData.length === 0 ? (
           <div className="text-center text-gray-400">----</div>
         ) : (
@@ -47,7 +47,7 @@ function Hourly() {
               <div
                 key={item.dt}
                 className="flex justify-between items-center rounded-lg bg-sidebar-ring p-3 mb-2"
-              >  <div className="flex gap-x-2 items-center">
+              >  <div className="flex gap-x-2 items-center ">
                     <div>
                        {item.weather[0]?.icon && (
                         <img
