@@ -22,8 +22,8 @@ function Hourly() {
 
   return (
     <div className="bg-accent px-2 pt-3 rounded-2xl lg:max-h-112  ">
-      <div className="flex justify-between items-center w-full  lg:flex-row max-sm:flex ">
-        <span className="text-3xl max-lg:text-base">Hourly <span className="max-sm:hidden ">Forecast</span></span>
+      <div className="flex justify-between items-center w-full  lg:flex-row max-sm:flex text-nowrap  ">
+        <span className="lg:text-xl max-lg:text-base">Hourly <span className="max-sm:hidden ">Forecast</span></span>
         <Weeks />
       </div>
 
@@ -46,14 +46,14 @@ function Hourly() {
             return (
               <div
                 key={item.dt}
-                className="flex justify-between items-center rounded-lg bg-sidebar-ring p-3 mb-2"
+                className="flex justify-between items-center rounded-lg bg-sidebar-ring p-3 mb-2 max-md:p-2 max-md:text-sm"
               >  <div className="flex gap-x-2 items-center ">
                     <div>
                        {item.weather[0]?.icon && (
                         <img
                           src={`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
                           alt="icon"
-                          className="w-10 h-10"
+                          className="w-10 h-10 max-sm:w-8 max-sm:h-8"
                         />
                       )}
                     </div>
