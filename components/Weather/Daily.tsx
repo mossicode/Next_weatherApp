@@ -48,7 +48,7 @@ function Daily() {
         {dailyArray.map((item, index) => (
           <div
             key={index}
-            className="bg-sidebar-accent gap-y-1 min-w-32 min-h-32 rounded-lg mt-2 p-2 flex flex-col flex-1 max-sm:mb-3"
+            className="bg-sidebar-accent gap-y-1 min-w-32 min-h-32 rounded-lg mt-2 p-4 flex flex-col flex-1 max-sm:mb-3"
           >
             <div className="mx-auto">{getWeekday(item.day)}</div>
 

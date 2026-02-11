@@ -21,6 +21,48 @@ export default function SearchBar() {
   const API_KEY = process.env.NEXT_PUBLIC_WEATHER_API_KEY
 
   // ===============================
+  // Auto get current location on mount
+  // ===============================
+  useEffect(() => {
+    const getCurrentLocation = () => {
+      if (!navigator.geolocation) {
+        setError("Geolocation is not supported by your browser.")
+        return
+      }
+
+      setLoading(true)
+      setError("")
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords
+          try {
+            const res = await fetch(
+              `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`
+            )
+            const data = await res.json()
+            if (data.length > 0) {
+              await handleSelect(data[0])
+            } else {
+              setError("Could not find your location.")
+            }
+          } catch {
+            setError("Something went wrong!")
+          } finally {
+            setLoading(false)
+          }
+        },
+        (err) => {
+          setError(err.message)
+          setLoading(false)
+        }
+      )
+    }
+
+    getCurrentLocation()
+  }, [])
+
+  // ===============================
   // Debounce input (500ms delay)
   // ===============================
   useEffect(() => {
@@ -28,9 +70,7 @@ export default function SearchBar() {
       setDebouncedValue(cityInput)
     }, 500)
 
-    return () => {
-      clearTimeout(handler)
-    }
+    return () => clearTimeout(handler)
   }, [cityInput])
 
   // ===============================
@@ -57,23 +97,14 @@ export default function SearchBar() {
   // Call API after debounce
   // ===============================
   useEffect(() => {
-    if (debouncedValue) {
-      fetchSuggestions(debouncedValue)
-    } else {
-      setResults([])
-    }
+    if (debouncedValue) fetchSuggestions(debouncedValue)
+    else setResults([])
   }, [debouncedValue])
 
-  // ===============================
-  // Input change
-  // ===============================
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCityInput(e.target.value)
   }
 
-  // ===============================
-  // Select city from list
-  // ===============================
   const handleSelect = async (item: any) => {
     setCityInput(item.name)
     setResults([])
@@ -95,9 +126,6 @@ export default function SearchBar() {
     }
   }
 
-  // ===============================
-  // Search button
-  // ===============================
   const handleSearch = async () => {
     if (!cityInput.trim()) {
       setLocalError("Please enter a city name.")
@@ -120,7 +148,6 @@ export default function SearchBar() {
         if (data.length > 0) {
           await handleSelect(data[0])
         } else {
-          console.log(data)
           setError("City not found!")
           setWeather(null)
         }
@@ -140,7 +167,7 @@ export default function SearchBar() {
       </h1>
 
       <div className="flex gap-x-4 items-center flex-wrap relative">
-        <InputGroup className="sm:min-w-100 max-sm:w-full h-16 max-sm:h-10 flex-1">
+        <InputGroup className="sm:min-w-100 max-sm:w-full h-14 max-sm:h-10 flex-1">
           <InputGroupInput
             placeholder="Type city or province"
             value={cityInput}
@@ -153,7 +180,7 @@ export default function SearchBar() {
 
         <Button
           onClick={handleSearch}
-          className="h-16 max-sm:h-9 w-32 max-sm:w-16 max-sm:text-sm text-white text-lg bg-blue-500 hover:bg-blue-400"
+          className="h-13 max-sm:h-9 w-32 max-sm:w-16 max-sm:text-sm text-white text-lg bg-blue-500 hover:bg-blue-400 dark:bg-blue-900 dark:hover:bg-blue-800"
         >
           Search
         </Button>

@@ -46,7 +46,7 @@ function Hourly() {
             return (
               <div
                 key={item.dt}
-                className="flex justify-between items-center rounded-lg bg-sidebar-ring p-3 mb-2 max-md:p-2 max-md:text-sm"
+                className="flex justify-between items-center rounded-lg bg-border p-4 mb-2 max-md:p-2 max-md:text-sm"
               >  <div className="flex gap-x-2 items-center ">
                     <div>
                        {item.weather[0]?.icon && (

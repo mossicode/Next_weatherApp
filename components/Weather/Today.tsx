@@ -88,7 +88,7 @@ function Today() {
       </div>
 
       <div className="w-full min-h-16 mt-5 flex gap-3 flex-wrap">
-        <div className="flex-1 bg-sidebar-accent rounded-lg px-3 py-2 space-y-5 justify-between flex-nowrap">
+        <div className="flex-1 bg-sidebar-accent rounded-lg px-4 py-3 space-y-5 justify-between flex-nowrap">
           <div className="text-nowrap flex-nowrap">Feels Like</div>
           <div className="relative text-4xl max-sm:text-xl text-nowrap flex-nowrap">
             {feelsLike}
@@ -96,19 +96,19 @@ function Today() {
           </div>
         </div>
 
-        <div className="flex-1 bg-sidebar-accent rounded-lg px-3 py-2 space-y-5 justify-between">
+        <div className="flex-1 bg-sidebar-accent rounded-lg px-4 py-3 space-y-5 justify-between">
           <div className="text-nowrap flex-nowrap">Humidity</div>
           <div className="text-4xl max-sm:text-xl text-nowrap flex-nowrap">{humidity}%</div>
         </div>
 
-        <div className="flex-1 bg-sidebar-accent rounded-lg px-3 py-2 space-y-5 justify-between">
+        <div className="flex-1 bg-sidebar-accent rounded-lg px-4 py-3 space-y-5 justify-between">
           <div className="text-nowrap flex-nowrap">Wind</div>
           <div className="text-4xl max-sm:text-xl text-nowrap flex-nowrap">
             {windSpeed} {todayData ? windUnit : ""}
           </div>
         </div>
 
-        <div className="flex-1 bg-sidebar-accent rounded-lg px-3 py-2 space-y-5 justify-between">
+        <div className="flex-1 bg-sidebar-accent rounded-lg px-4 py-3 space-y-5 justify-between">
           <div className="text-nowrap flex-nowrap">Precipitation</div>
           <div className="text-4xl max-sm:text-xl text-nowrap flex-nowrap">
             {precip} {todayData ? precipUnit : ""}
