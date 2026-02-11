@@ -167,7 +167,7 @@ export default function SearchBar() {
       </h1>
 
       <div className="flex gap-x-4 items-center flex-wrap relative">
-        <InputGroup className="sm:min-w-100 max-sm:w-full h-14 max-sm:h-10 flex-1">
+        <InputGroup className="sm:min-w-100 max-sm:w-full h-12 max-sm:h-10 flex-1">
           <InputGroupInput
             placeholder="Type city or province"
             value={cityInput}
@@ -180,7 +180,7 @@ export default function SearchBar() {
 
         <Button
           onClick={handleSearch}
-          className="h-13 max-sm:h-9 w-32 max-sm:w-16 max-sm:text-sm text-white text-lg bg-blue-500 hover:bg-blue-400 dark:bg-blue-900 dark:hover:bg-blue-800"
+          className="h-11 max-sm:h-9 w-32 max-sm:w-16 max-sm:text-sm text-white text-lg bg-blue-500 hover:bg-blue-400 dark:bg-blue-900 dark:hover:bg-blue-800"
         >
           Search
         </Button>
